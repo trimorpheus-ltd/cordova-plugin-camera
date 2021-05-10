@@ -67,6 +67,10 @@ import java.util.Date;
  * the camera view was shown is redisplayed.
  */
 public class CameraLauncher extends CordovaPlugin implements MediaScannerConnectionClient {
+    /**
+    * Attempting to delete duplicate images causes crashes in Android 10.
+    */
+    private static final boolean SKIP_CHECK_FOR_DUPLICATE_IMAGES = true;
 
     private static final int DATA_URL = 0;              // Return base64 encoded string
     private static final int FILE_URI = 1;              // Return file uri (content://media/external/images/media/2 for Android)
@@ -1214,6 +1218,9 @@ public class CameraLauncher extends CordovaPlugin implements MediaScannerConnect
      * @param type FILE_URI or DATA_URL
      */
     private void checkForDuplicateImage(int type) {
+        if (SKIP_CHECK_FOR_DUPLICATE_IMAGES)
+            return;
+
         int diff = 1;
         Uri contentStore = whichContentStore();
         Cursor cursor = queryImgDB(contentStore);
